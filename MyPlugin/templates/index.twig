@@ -1,0 +1,78 @@
+{% extends 'admin.twig' %}
+
+{% block content %}
+    <head>
+        <style>
+            table {
+                margin-top: 10px;
+                width: auto; /* Ширина таблицы */
+                border-collapse: collapse; /* Убираем двойные линии между ячейками */
+            }
+            td, th {
+                border: 1px solid black; /* Параметры рамки */
+            }
+            td {
+                text-align: start;
+                padding: 10px; /* Поля вокруг содержимого таблицы */
+            }
+            th {
+                text-align: center;
+                padding: 3px;
+                background: #b0e0e6; /* Цвет фона */
+            }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <strong>Пользователи посетившие все сайты</strong>
+        <br/>
+
+{#       Данные пользователи:#}
+{#        <br/>#}
+{#        {% for user in  users %}#}
+{#            <span key={{ user }}>{{user}},</span>#}
+{#        {% endfor %}#}
+{#        <br/>#}
+{#        Были на этих сайтах:#}
+{#        <br/>#}
+{#        <ul>#}
+{#            {% for domain in domains %}#}
+{#                <li key={{ domain }}><strong>{{ domain}}</strong></li>#}
+{#            {% endfor %}#}
+{#        </ul>#}
+{#        <br/>#}
+        <table>
+            <thead>
+                <tr>
+                    <th>Пользователи</th>
+                    <th>Сайты</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        {% for user in  users %}
+                            {{ user }}<br/>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for domain in  domains %}
+                            <strong>{{ domain }}</strong><br/>
+                        {% endfor %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+{#    <form oninput="txtURLTracked.value = txtURL.value +'?pk_campaign='+ txtCampaign.value +'&pk_kwd='+ txtKeyword.value#}
+{#+'&pk_source='+ txtSource.value +'&pk_medium='+ txtMedium.value +'&pk_content='+ txtContent.value">#}
+{#        URL to send the visitor to : <input type="text" name="txtURL" /> <br><br>#}
+{#        Campaign name : <input type="text" name="txtCampaign" /> <br><br>#}
+{#        Keyword : <input type="text" name="txtKeyword" /> <br><br>#}
+{#        Source : <input type="text" name="txtSource" /> <br><br>#}
+{#        Medium : <input type="text" name="txtMedium" > <br><br>#}
+{#        Content : <input type="text" name="txtContent" > <br><br>#}
+{#        URL tracked : <input type="text" name="txtURLTracked" > <br><br>#}
+{#    </form>#}
+
+{% endblock %}
