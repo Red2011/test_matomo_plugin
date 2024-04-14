@@ -17,6 +17,21 @@ namespace Piwik\Plugins\MyPlugin;
  * http://developer.piwik.org/api-reference/Piwik/Plugin/Controller and
  * http://developer.piwik.org/api-reference/Piwik/View
  */
+class UserInfo
+{
+//    public $visitId;
+    public $visitorID;
+    public $configID;
+    public $ipLocation;
+    public function __construct($visitorID, $configID, $ipLocation)
+    {
+//        $this->visitId = $visitId;
+        $this->visitorID = $visitorID;
+        $this->configID = $configID;
+        $this->ipLocation = $ipLocation;
+    }
+}
+
 class UserDomains
 {
     public $domains = array();
@@ -45,10 +60,10 @@ class UserDomains
         foreach ($urls as $url) {
             $domain = $this->patternURL($url['name']);
             if ($domain && !in_array($domain, $this->domains)) {
-                array_push($this->domains, $domain);
+                $this->domains[] = $domain;
             }
         }
-            $this->userID = bin2hex($idRow['idvisitor']);
+        $this->userID = bin2hex($idRow['idvisitor']);
     }
 }
 
@@ -134,19 +149,38 @@ class Controller extends \Piwik\Plugin\Controller
             $mainUrl = $this->patternURL($site['main_url']);
             $url = $this->patternURL($site['url']);
             if ($mainUrl && !in_array($site['main_url'], $allSites)) {
-                array_push($allSites, $mainUrl);
+                $allSites[] = $mainUrl;
             }
             if ($url && !in_array($site['url'], $allSites)) {
-                array_push($allSites, $url);
+                $allSites[] = $url;
             }
         }
         //получаем всех пользователей, которые были одновременно на всех сайтах из $Allsites
-        $idvisitors = $db->fetchAll('select idvisitor, idvisit from matomo_log_visit');
+        //исключаем доублирование config и visitor
+        $idvisitors = $db->fetchAll('select idvisitor, idvisit, config_id, location_ip from matomo_log_visit');
         foreach ($idvisitors as $idRow) {
             $userInfo = new UserDomains();
             $userInfo->getUserAndSites($db, $idRow);
             if ($userInfo->domains == $allSites) {
-                array_push($users, $userInfo->userID);
+                $currentUser = new UserInfo(bin2hex($idRow['idvisitor']), bin2hex($idRow['config_id']), @inet_ntop($idRow['location_ip']));
+                $duplicate = false;
+                if (count($users) < 1) {
+                    //записываем в массив пользователя как объект
+                    $users[] = $currentUser;
+                } else {
+                    //исключаем пользователя по id
+                    //сделать так чтобы можно было развернуть пользователя и посмотреть какие записи ему принадлежат ещё (как раз те, что исключаются)
+                    //при переборе сайтов будет 1 пользователь т.к. это будет осуществлять быстро, поэтому отловить его можно будет
+                    foreach ($users as $existingUserInfo) {
+                        if ($existingUserInfo->visitorID === $currentUser->visitorID || $existingUserInfo->configID === $currentUser->configID) {
+                            $duplicate = true;
+                            break;
+                        }
+                    }
+                    if (!$duplicate) {
+                        $users[] = $currentUser;
+                    }
+                }
             }
         }
 

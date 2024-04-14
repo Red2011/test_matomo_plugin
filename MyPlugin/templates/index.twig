@@ -24,7 +24,7 @@
         <title></title>
     </head>
     <body>
-        <strong>Пользователи посетившие все сайты</strong>
+        <strong>Сайты</strong>
         <br/>
 
 {#       Данные пользователи:#}
@@ -43,24 +43,45 @@
 {#        <br/>#}
         <table>
             <thead>
-                <tr>
-                    <th>Пользователи</th>
-                    <th>Сайты</th>
-                </tr>
+            <tr>
+                <th>Сайты</th>
+            </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>
-                        {% for user in  users %}
-                            {{ user }}<br/>
-                        {% endfor %}
-                    </td>
                     <td>
                         {% for domain in  domains %}
                             <strong>{{ domain }}</strong><br/>
                         {% endfor %}
                     </td>
                 </tr>
+            </tbody>
+        </table>
+        <br/>
+        <strong>Пользователи посетившие все сайты</strong>
+        <br/>
+        <table>
+            <thead>
+                <tr>
+                    <th>Visitor ID</th>
+                    <th>Config ID</th>
+                    <th>Ip address</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>
+                            {{ user.visitorID }}
+                        </td>
+                        <td>
+                            {{ user.configID }}
+                        </td>
+                        <td>
+                            {{ user.ipLocation}}
+                        </td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </body>
